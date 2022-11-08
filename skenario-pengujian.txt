@@ -1,0 +1,84 @@
+skenario pengujian
+1)	login view model
+    a)	ketika berhasil ogin
+        i)	    memastikan response sesuai dengan expectedResponse
+        ii)	    memastikan metode di class repository terpanggil
+        iii)	memastikan response tidak null
+        iv)	    memastikan nilai yang didapatkan Resource.Success()
+        v)	    memastikan nilai yang didapatkan bukan Resource.Error()
+        vi)	    memastikan status error false
+    b)	ketika gagal login
+        i)	    memastikan nilai yang didapatkan bukan Resource.Success()
+        ii)	    memastikan nilai yang didapatkan Resource.Error()
+        iii)	memastikan response null
+        iv)     memastikan pesan exception tidak null
+        v)      memastikan response sesuai dengan expectedResponse
+2)	register view model
+    a)	memastikan response sesuai dengan expectedResponse
+    b)	memastikan metode di class repository terpanggil
+    c)	memastikan response tidak null
+    d)	memastikan nilai yang didapatkan Resource.Success()
+    e)	memastikan nilai yang didapatkan bukan Resource.Error()
+    f)	memastikan status error false
+
+3)	home view model
+    a)	memastikan response sesuai dengan expectedResponse
+    b)	memastikan metode di class repository terpanggil
+    c)	memastikan response tidak null
+    d)  memastikan banyak data sama dengan banyak data dummy
+
+4)	add view model
+    a)	memastikan response sesuai dengan expectedResponse
+    b)	memastikan metode di class repository terpanggil
+    c)	memastikan response tidak null
+    d)	memastikan nilai yang didapatkan Resource.Success()
+    e)	memastikan nilai yang didapatkan bukan Resource.Error()
+    f)	memastikan status error false
+
+5)	maps view model
+    a)	memastikan response sesuai dengan expectedResponse
+    b)	memastikan metode di class repository terpanggil
+    c)	memastikan data tidak null
+    d) 	memastikan data tidak kosong
+    e)	memastikan banyak data sama dengan banyak data dummy
+
+6)	Data Repository
+    a)	berhasil melakukan login
+        i)	    memastikan response sesuai dengan expectedResponse
+        ii)	    memastikan metode di class repository terpanggil
+        iii)	memastikan response tidak null
+        iv)	    memastikan nilai yang didapatkan Resource.Success()
+        v)	    memastikan nilai yang didapatkan bukan Resource.Error()
+        vi)	    memastikan status error false
+        vii)	memastikan Token di simpan
+
+    b)	berhasil melakukan register
+        i)	    memastikan response sesuai dengan expectedResponse
+        ii)	    memastikan metode di class repository terpanggil
+        iii)	memastikan response tidak null
+        iv)	    memastikan nilai yang didapatkan Resource.Success()
+        v)	    memastikan nilai yang didapatkan bukan Resource.Error()
+        vi)	    memastikan status error false
+
+    c)	berhasil mendapatkan data story dengan paging
+        i)	    memastikan response sesuai dengan expectedResponse
+        ii)	    memastikan metode di class repository terpanggil
+        iii)	memastikan response tidak null
+        iv)	    memastikan nilai yang didapatkan Resource.Success()
+        v)	    memastikan nilai yang didapatkan bukan Resource.Error()
+        vi)	    memastikan status error false
+
+    d)	berhasil mendapatkan data story dari db local
+        i)	    memastikan nilai yang didapatkan bukan Resource.Success()
+        ii)	    memastikan nilai yang didapatkan Resource.Error()
+        iii)	memastikan response tidak null
+        iv)     memastikan pesan exception tidak null
+        v)      memastikan response sesuai dengan expectedResponse
+
+    e)	berhasil menambahkan data story
+        i)	    memastikan response sesuai dengan expectedResponse
+        ii)	    memastikan metode di class repository terpanggil
+        iii)	memastikan response tidak null
+        iv)	    memastikan nilai yang didapatkan Resource.Success()
+        v)	    memastikan nilai yang didapatkan bukan Resource.Error()
+        vi)	    memastikan status error false

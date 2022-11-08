@@ -1,11 +1,16 @@
 package com.story.app.ui.add
 
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
@@ -13,6 +18,9 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.story.app.R
 import com.story.app.common.CameraUtility
@@ -20,22 +28,21 @@ import com.story.app.common.SharedPreferenceProvider
 import com.story.app.core.Resource
 import com.story.app.databinding.ActivityAddBinding
 import com.story.app.ui.custom.CustomTextInput
-import okhttp3.MediaType.Companion.toMediaType
+import com.story.app.ui.home.HomeActivity
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.FileOutputStream
+import java.io.*
 
-class AddActivity : AppCompatActivity() {
+class AddActivity : AppCompatActivity(), LocationListener {
     private lateinit var binding: ActivityAddBinding
     private val viewModel: AddViewModel by viewModel()
     private var getFile: File? = null
     private lateinit var currentPhotoPath: String
+    private var lat: Float = -6.857053F
+    private var lon: Float = 107.53229F
+    private lateinit var locationManager: LocationManager
 
     private val launcherIntentCamera = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -70,6 +77,8 @@ class AddActivity : AppCompatActivity() {
         }
 
         with(binding) {
+            getLocation()
+
             btCamera.setOnClickListener {
                 openCamera()
             }
@@ -81,7 +90,7 @@ class AddActivity : AppCompatActivity() {
             etDescription.globalChange()
             btnSubmit.setOnClickListener {
                 val token = SharedPreferenceProvider(applicationContext).getToken()!!
-                val file = getFile as File
+                val file = reduceFileImage(getFile as File)
                 val description = etDescription.text.toString()
                 val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                 val imageMultipart: MultipartBody.Part = MultipartBody.Part.createFormData(
@@ -89,8 +98,8 @@ class AddActivity : AppCompatActivity() {
                     file.name,
                     requestImageFile
                 )
-                viewModel.setStoryParam(token, imageMultipart, description)
-                viewModel.postStory().observe(this@AddActivity) {
+                viewModel.setStoryParam(token, imageMultipart, description, lat, lon)
+                viewModel.postStory.observe(this@AddActivity) {
                     when (it) {
                         is Resource.Loading -> {
                             viewLoading.root.visibility = View.VISIBLE
@@ -102,7 +111,11 @@ class AddActivity : AppCompatActivity() {
                                 resources.getString(R.string.success_add_new_story),
                                 Toast.LENGTH_SHORT
                             ).show()
-                            onBackPressed()
+                            Intent(this@AddActivity, HomeActivity::class.java)
+                                .apply {
+                                    finish()
+                                    startActivity(this)
+                                }
                         }
                         is Resource.Error -> {
                             viewLoading.root.visibility = View.GONE
@@ -113,6 +126,21 @@ class AddActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    fun reduceFileImage(file: File): File {
+        val bitmap = BitmapFactory.decodeFile(file.path)
+        var compressQuality = 100
+        var streamLength: Int
+        do {
+            val bmpStream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
+            val bmpPicByteArray = bmpStream.toByteArray()
+            streamLength = bmpPicByteArray.size
+            compressQuality -= 5
+        } while (streamLength > 1000000)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
+        return file
     }
 
     private fun openGallery() {
@@ -172,4 +200,18 @@ class AddActivity : AppCompatActivity() {
 
         })
     }
+
+    private fun getLocation() {
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if ((ContextCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION), 2)
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+    }
+
+    override fun onLocationChanged(location: Location) {
+        lon = location.longitude.toFloat()
+        lat = location.latitude.toFloat()
+    }
+
 }

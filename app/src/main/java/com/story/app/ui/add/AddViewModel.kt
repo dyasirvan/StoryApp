@@ -3,6 +3,7 @@ package com.story.app.ui.add
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.story.app.core.DataRepository
+import kotlinx.coroutines.flow.mapNotNull
 import okhttp3.MultipartBody
 
 class AddViewModel(private var dataRepository: DataRepository) : ViewModel() {
@@ -10,15 +11,15 @@ class AddViewModel(private var dataRepository: DataRepository) : ViewModel() {
     private lateinit var token: String
     private lateinit var file: MultipartBody.Part
     private lateinit var description: String
-    private var lat: String? = null
-    private var lon: String? = null
+    private var lat: Float = -6.857053F
+    private var lon: Float = 107.53229F
 
     fun setStoryParam(
         token: String,
         file: MultipartBody.Part,
         description: String,
-        lat: String? = null,
-        lon: String? = null
+        lat: Float,
+        lon: Float
     ) {
         this.token = token
         this.file = file
@@ -27,6 +28,7 @@ class AddViewModel(private var dataRepository: DataRepository) : ViewModel() {
         this.lon = lon
     }
 
-    fun postStory() = dataRepository.addNewStory("Bearer $token", file, description, lat, lon).asLiveData()
-
+    val postStory by lazy {
+        dataRepository.addNewStory("Bearer $token", file, description, lat, lon).asLiveData()
+    }
 }

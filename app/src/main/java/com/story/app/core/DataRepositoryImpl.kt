@@ -17,8 +17,8 @@ interface DataRepositoryImpl {
         token: String,
         file: MultipartBody.Part,
         description: String,
-        lat: String?,
-        lon: String?
+        lat: Float,
+        lon: Float
     ): Flow<Resource<GeneralResponse>>
 
     fun getStories(token: String): Flow<PagingData<StoryEntity>>

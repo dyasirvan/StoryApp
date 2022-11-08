@@ -62,8 +62,8 @@ class DataRepositoryTest{
     private val storyEntityMock = DataDummy.getStories()
     private val fileMock = DataDummy.multipartFile()
     private val descriptionMock = "bukan desctiprion"
-    private val latitudeMock = "-7.7856193"
-    private val longitudeMock = "110.46422"
+    private val latitudeMock = -7.7856193F
+    private val longitudeMock = 110.46422F
 
     @Before
     fun setup(){
@@ -130,12 +130,12 @@ class DataRepositoryTest{
             )
             CoroutineScope(Dispatchers.IO).launch {
                 differ.submitData(it)
+                advanceUntilIdle()
+                verify(storyPagingSource).getStories(tokenMock)
+                assertNotNull(differ.snapshot())
+                assertEquals(differ.snapshot().size, storyEntityMock.size)
             }
-            advanceUntilIdle()
 
-            verify(storyPagingSource).getStories(tokenMock)
-            assertNotNull(differ.snapshot())
-            assertEquals(differ.snapshot().size, storyEntityMock.size)
         }
     }
 

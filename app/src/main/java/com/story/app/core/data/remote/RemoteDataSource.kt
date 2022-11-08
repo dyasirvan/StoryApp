@@ -11,8 +11,10 @@ import com.story.app.core.data.remote.network.ApiResponse
 import com.story.app.core.data.remote.network.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
@@ -80,12 +82,12 @@ class RemoteDatasource(
         token: String,
         file: MultipartBody.Part,
         description: String,
-        lat: String?,
-        lon: String?
+        lat: Float,
+        lon: Float
     ): Flow<ApiResponse<GeneralResponse>> {
         return flow {
             try {
-                val response = apiService?.addNewStory(token, file, description, lat, lon)
+                val response = apiService?.addNewStory(token, file, description.toRequestBody("text/plain".toMediaType()), lat, lon)
                 if (response != null) {
                     emit(ApiResponse.Success(response))
                 } else {

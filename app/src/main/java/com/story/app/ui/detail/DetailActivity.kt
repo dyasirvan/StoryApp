@@ -21,6 +21,7 @@ class DetailActivity : AppCompatActivity() {
 
         with(binding) {
             data?.apply {
+                supportActionBar?.title = name
                 tvName.text = name
                 tvDesc.text = description
                 Glide.with(this@DetailActivity)

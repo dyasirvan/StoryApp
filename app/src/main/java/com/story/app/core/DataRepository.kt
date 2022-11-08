@@ -52,8 +52,8 @@ class DataRepository(
         token: String,
         file: MultipartBody.Part,
         description: String,
-        lat: String?,
-        lon: String?
+        lat: Float,
+        lon: Float
     ): Flow<Resource<GeneralResponse>> {
         return object : OnlineBoundResource<GeneralResponse>() {
             override suspend fun createCall(): Flow<ApiResponse<GeneralResponse>> {

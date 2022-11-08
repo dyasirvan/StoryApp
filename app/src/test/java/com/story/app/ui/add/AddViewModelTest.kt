@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.verify
 import org.mockito.junit.MockitoJUnitRunner
 
 @ExperimentalCoroutinesApi
@@ -24,6 +25,9 @@ import org.mockito.junit.MockitoJUnitRunner
 class AddViewModelTest{
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     @Mock
     private lateinit var dataRepository: DataRepository
@@ -33,8 +37,8 @@ class AddViewModelTest{
     private val fileMock = DataDummy.multipartFile()
     private val tokenMock = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c2VyLXRrenRtVi1tQ0hHRDYyOEQiLCJpYXQiOjE2NjcxMTcyMTZ9.sR3fwAxHj64b5aGa7KfuhlGaQzw-zUx2hn8t_kjt0W0"
     private val descriptionMock = "bukan description"
-    private val latitudeMock = "-6.8570527"
-    private val longitudeMock = "107.5322845"
+    private val latitudeMock = -6.857053F
+    private val longitudeMock = 107.53229F
 
 
     @Before
@@ -42,9 +46,6 @@ class AddViewModelTest{
         addViewModel = AddViewModel(dataRepository)
         addViewModel.setStoryParam(tokenMock, fileMock, descriptionMock, latitudeMock, longitudeMock)
     }
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
 
     @Test
     fun `when add story`()  = runTest {
@@ -54,12 +55,12 @@ class AddViewModelTest{
         Mockito.`when`(dataRepository.addNewStory(tokenMock, fileMock, descriptionMock, latitudeMock, longitudeMock)).thenReturn(
             expectedResponse
         )
-        addViewModel.postStory().observeForever {
-            Mockito.verify(dataRepository).addNewStory(tokenMock, fileMock, descriptionMock, latitudeMock, longitudeMock)
+        addViewModel.postStory.observeForever {
+            verify(dataRepository).addNewStory(tokenMock, fileMock, descriptionMock, latitudeMock, longitudeMock)
             assertNotNull(it.data)
             assertTrue(it is Resource.Success)
             assertFalse(it is Resource.Error)
-            assertFalse(it.data?.error ?: false)
+            assertFalse(it?.data?.error ?: false)
         }
     }
 }

@@ -5,12 +5,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.story.app.R
 import com.story.app.common.SharedPreferenceProvider
 import com.story.app.core.Resource
@@ -76,6 +79,7 @@ class HomeActivity : AppCompatActivity() {
             fabAddNewStory.setOnClickListener {
                 Intent(this@HomeActivity, AddActivity::class.java)
                     .apply {
+                        finish()
                         startActivity(this)
                     }
             }

@@ -36,9 +36,9 @@ interface ApiService {
     @POST("stories")
     suspend fun addNewStory(
         @Header("Authorization") token: String,
-        @Part file: MultipartBody.Part,
-        @Part("description") description: String,
-        @Part("lat") lat: String?,
-        @Part("lon") lon: String?
+        @Part photo: MultipartBody.Part,
+        @Part("description") description: RequestBody,
+        @Part("lat") lat: Float,
+        @Part("lon") lon: Float
     ): GeneralResponse
 }
