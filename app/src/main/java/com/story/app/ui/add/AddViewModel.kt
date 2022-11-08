@@ -3,7 +3,6 @@ package com.story.app.ui.add
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.story.app.core.DataRepository
-import kotlinx.coroutines.flow.mapNotNull
 import okhttp3.MultipartBody
 
 class AddViewModel(private var dataRepository: DataRepository) : ViewModel() {
